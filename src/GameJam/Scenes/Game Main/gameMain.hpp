@@ -15,7 +15,7 @@
 #define FOODTEXTURESIZE 100
 #define FOODTOFOODLENGTH 200
 #define TIMELIMITMAX 600
-#define ENDWAITTIME 6 * 2
+#define ENDWAITTIME 60 * 2
 #define FOODCLICKLIMIT 5
 
 class GameMain : public Scene{

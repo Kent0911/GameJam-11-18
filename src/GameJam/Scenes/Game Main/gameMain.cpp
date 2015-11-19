@@ -26,11 +26,17 @@ GameMain::GameMain(){
 }
 
 void GameMain::Update(){
-  if (App::Get().isPushKey('0')){
-    ResMed.Get(AudioKey::Game).stop();
-    ResMed.Get(AudioKey::TimeOut).play();
-    scene_manager->ChangeScene(std::shared_ptr<Result>(new Result(result)));
-    return;
+  if (true == is_game_end){
+	  if (ResMed.Get(AudioKey::Game).isPlaying()){
+		  ResMed.Get(AudioKey::Game).stop();
+	  }
+	if (!ResMed.Get(AudioKey::TimeOut).isPlaying()){
+		ResMed.Get(AudioKey::TimeOut).play();
+	}
+  }
+  if (true == is_end){
+	  scene_manager->ChangeScene(std::shared_ptr<Result>(new Result(result)));
+	  return;
   }
 
   if (!ResMed.Get(AudioKey::Game).isPlaying()){
@@ -92,14 +98,18 @@ void GameMain::Update(){
   }
 
   UpdateList();
-
-  if (food_click_limit > 0){
-    food_click_limit--;
+  if (true != is_game_end){
+	  if (food_click_limit > 0){
+		  food_click_limit--;
+	  }
   }
 
   time_limit--;
   if (time_limit < ENDWAITTIME){
     is_game_end = true;
+  }
+  if (time_limit < 0){
+	  is_end = true;
   }
 }
 
@@ -115,9 +125,7 @@ void GameMain::Draw(){
   }
   else{
     /* "I—¹"‚Ì•¶Žš•\‹L */
-  }
-  if (App::Get().isPushKey('0')){
-    scene_manager->ChangeScene(std::make_shared<Result>());
+
   }
 
   for (int i = 0; i < 3; i++)
@@ -211,7 +219,7 @@ void GameMain::UpdateList(){
 }
 
 void GameMain::DisplayedTimer(int _time){
-  unsigned int time = (_time * 10) / 6;
+	unsigned int time = ((_time - ENDWAITTIME) * 10) / 6;
   while (time > 0){
     time_vector.push_back(time % 10);
     time /= 10;
